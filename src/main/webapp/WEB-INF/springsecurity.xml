@@ -1,0 +1,32 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+<!-- <beans xmlns="http://www.springframework.org/schema/beans" -->
+<!-- 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security" -->
+<!-- 	xsi:schemaLocation="http://www.springframework.org/schema/beans -->
+<!-- 	http://www.springframework.org/schema/beans/spring-beans.xsd -->
+<!-- 	http://www.springframework.org/schema/security -->
+<!-- 	http://www.springframework.org/schema/security/spring-security-4.0.xsd"> -->
+
+<!-- 	<security:http auto-config="true" use-expressions="true"> -->
+
+<!-- 		<security:intercept-url pattern="/admin/*"	access="Aluno" /> -->
+		
+<!-- 		<security:form-login authentication-failure-url="/login.xhtml?erro=true" -->
+<!-- 			default-target-url="/admin/formavaliacao.xhtml" username-parameter="login" -->
+<!-- 			password-parameter="senha" /> -->
+<!-- 	</security:http> -->
+
+<!-- 	<security:authentication-manager> -->
+
+<!-- 		<security:authentication-provider> -->
+
+<!-- 			<security:jdbc-user-service -->
+<!-- 				data-source-ref="dataSource" -->
+<!-- 				users-by-username-query="select login, senha, ativo from usuario where login=?" -->
+<!-- 				authorities-by-username-query="select u.login, p.descricao from usuario u, perfil p where u.perfil_id=p.id and login=?" /> -->
+
+<!-- 		</security:authentication-provider> -->
+
+<!-- 	</security:authentication-manager> -->
+
+<!-- </beans> -->
+	

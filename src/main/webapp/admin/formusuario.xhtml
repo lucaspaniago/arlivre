@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:head>
+
+	<title>Cadastro de Usuários</title>
+
+	<script type="text/javascript">
+		function confirmarExclusao(nome) {
+			return window.confirm("Deseja excluir o " + nome + "?");
+		}
+	</script>
+
+	<script type="text/javascript">
+		PrimeFaces.locales['pt'] = {
+		    closeText: 'Fechar',
+		    prevText: 'Anterior',
+		    nextText: 'Próximo',
+		    currentText: 'Começo',
+		    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+		    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],
+		    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+		    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+		    dayNamesMin: ['D','S','T','Q','Q','S','S'],
+		    weekHeader: 'Semana',
+		    firstDay: 0,
+		    isRTL: false,
+		    showMonthAfterYear: false,
+		    yearSuffix: '',
+		    timeOnlyTitle: 'Só Horas',
+		    timeText: 'Tempo',
+		    hourText: 'Hora',
+		    minuteText: 'Minuto',
+		    secondText: 'Segundo',
+		    ampm: false,
+		    month: 'Mês',
+		    week: 'Semana',
+		    day: 'Dia',
+		    allDayText : 'Todo o Dia'
+		};
+	</script>
+
+</h:head>
+
+<h:body>
+
+	<ui:include src="/admin/menu.xhtml" />
+
+	<h:form id="form-cadastro" prependId="false"
+		style="margin-bottom: 5px;">
+		<p:growl id="mensagem" showDetail="false" sticky="true"/>
+
+		<p:panel header="Cadastro de Usuário">
+
+			<!-- 			<f:facet name="header"> -->
+			<!-- 				<h3>Cadastro de Usuários</h3> -->
+			<!-- 			</f:facet> -->
+			<h:panelGrid columns="2" cellpadding="5">
+
+				<p:outputLabel for="perfil" value="Perfil:" />
+				<p:selectOneButton id="perfil"
+					value="#{usuarioControllerMaster.usuario.perfil}"
+					converter="#{perfilConverter}" required="true"
+					requiredMessage="Escolha o perfil.">
+
+					<f:selectItems value="#{perfilController.perfis}" var="perfil"
+						itemLabel="#{perfil.descricao}" />
+
+					<p:ajax event="change"
+						listener="#{usuarioControllerMaster.setUsuariosPorPerfilDoUsuarioAtual()}"
+						update="@form, listagem" />
+
+
+				</p:selectOneButton>
+
+				<p:outputLabel for="nome" value="Nome:" />
+				<p:inputText id="nome" value="#{usuarioControllerMaster.usuario.nome}"
+					placeholder="Digite o nome" required="true"
+					requiredMessage="Digite o nome." />
+
+				<p:outputLabel for="login" value="Login:" />
+				<p:inputText id="login" value="#{usuarioControllerMaster.usuario.login}"
+					disabled="#{usuarioControllerMaster.edicaoDeUsuario}" placeholder="Digite o login"
+					required="true" requiredMessage="Escolha um login." />
+
+				<p:outputLabel for="dataDeNascimento" value="Data de nascimento:" />
+				<p:calendar id="dataDeNascimento"
+					value="#{usuarioControllerMaster.usuario.dataDeNascimento}" locale="pt"
+					pattern="dd/MM/yyyy" mask="true"
+					converterMessage="Digite uma data de nascimento válida."
+					placeholder="Digite..."
+					requiredMessage="Digite sua data de nascimento."
+					validatorMessage="Digite uma data de nascimento válida."
+					required="true" showOn="button" />
+
+				<p:outputLabel for="sexo" value="Sexo:" />
+				<p:selectOneButton id="sexo"
+					value="#{usuarioControllerMaster.usuario.sexo}" required="true"
+					requiredMessage="Por favor, escolha o sexo.">
+
+					<f:selectItem itemValue="Masculino" itemLabel="Masculino" />
+					<f:selectItem itemValue="Feminino" itemLabel="Feminino" />
+
+				</p:selectOneButton>
+
+				<p:outputLabel for="email" value="e-mail:" />
+				<p:inputText id="email" required="false" label="email" size="40"
+					placeholder="Digite o e-mail"
+					requiredMessage="Por favor, insira seu e-mail."
+					validatorMessage="Por favor insira um e-mail válido."
+					value="#{usuarioControllerMaster.usuario.email}">
+
+					<f:validateRegex
+						pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+				</p:inputText>
+
+				<p:outputLabel for="senha" rendered="#{!usuarioControllerMaster.edicaoDeUsuario}"
+					value="Senha:" />
+				<p:password id="senha" rendered="#{!usuarioControllerMaster.edicaoDeUsuario}"
+					feedback="true" promptLabel="Digite a senha"
+					weakLabel="Senha de merda" goodLabel="Senha mais ou menos"
+					strongLabel="Senha foda" value="#{usuarioControllerMaster.usuario.senha}"
+					placeholder="Digite a senha" required="true"
+					requiredMessage="Escolha uma senha." />
+
+			</h:panelGrid>
+
+			<f:facet name="footer">
+
+				<h:panelGroup>
+
+					<p:commandButton
+						actionListener="#{usuarioControllerMaster.novoUsuario()}"
+						value="Novo" rendered="#{usuarioControllerMaster.edicaoDeUsuario}" update="@form" />
+					
+					<p:commandButton value="Salvar" action="#{usuarioControllerMaster.salvarUsuario()}" update="mensagem" />
+
+				</h:panelGroup>
+
+			</f:facet>
+		</p:panel>
+
+		<p:focus for="nome" />
+
+		<p:messages />
+
+	</h:form>
+
+	<h:form id="listagem">
+
+
+		<p:panel>
+			<f:facet name="header">
+				Lista de #{usuarioControllerMaster.getPerfilNoPlural()}
+			</f:facet>
+
+			<p:dataTable id="lista-usuarios"
+				value="#{usuarioControllerMaster.usuarios}" var="usuario"
+				selectionMode="single" rowKey="#{usuario.id}" paginator="true"
+				rows="5" emptyMessage="Nada encontrado" reflow="true"
+				paginatorAlwaysVisible="false">
+
+				<p:ajax event="rowSelect"
+					listener="#{usuarioControllerMaster.editarAluno}"
+					update="form-cadastro" />
+
+				<p:column headerText="ID" width="50" filterBy="#{usuario.id}">
+					#{usuario.id}
+				</p:column>
+
+				<p:column headerText="Perfil" filterBy="#{usuario.perfil.descricao}">
+					#{usuario.perfil.descricao}
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{usuario.nome}"
+					filterMatchMode="contains">
+					#{usuario.nome}
+				</p:column>
+
+				<p:column headerText="Login" filterBy="#{usuario.login}">
+					#{usuario.login}
+				</p:column>
+
+				<p:column headerText="Data de nascimento">
+					<!-- Aqui eu usei o outputLabel para poder usar o converterDateTime -->
+					<p:outputLabel value="#{usuario.dataDeNascimento}">
+						<f:convertDateTime pattern="dd/MM/YYYY" />
+					</p:outputLabel>
+				</p:column>
+
+				<p:column headerText="Senha">
+					#{usuario.senha}
+				</p:column>
+
+				<p:column headerText="Ação">
+					<p:commandButton
+						actionListener="#{usuarioControllerMaster.deletar(usuario)}"
+						value="Excluir" update="@form"
+						onclick="return confirmarExclusao('#{usuario.nome}')" />
+
+					<p:commandButton
+						action='#{usuarioControllerMaster.editarAluno(usuario, "chama-aluno")}'
+						value="Editar" update="form-cadastro" ajax="rowSelect" />
+
+					<p:commandButton action="#{usuarioControllerMaster.verPaginaAluno(usuario)}"
+						value="Ver Perfil" ajax="rowSelect" />
+				</p:column>
+
+
+
+				<p:column headerText="Avaliações">
+
+					<p:commandButton action="chama-edicao-avaliacao.xhtml"
+						actionListener='#{usuarioControllerMaster.novaAvaliacao(usuario, "chama-aluno")}'
+						value="Nova" ajax="rowSelect" />
+
+					<p:commandButton
+						value="Todas" ajax="rowSelect" />
+
+				</p:column>
+
+
+			</p:dataTable>
+
+
+		</p:panel>
+
+	</h:form>
+
+</h:body>
+</html>

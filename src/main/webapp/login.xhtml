@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:head>
+	<title>Login</title>
+</h:head>
+
+<h:body>
+	<div align="center">
+		<h:outputText value="Usuário Inválido" rendered="#{param.erro}" />
+		<h:form prependId="false">
+			<p:panelGrid columns="2">
+				<h:outputLabel for="login" value="Usuário: " />
+				<h:inputText id="login" required="true" />
+				<h:outputLabel for="senha" value="Senha: " />
+				<h:inputSecret id="senha" required="true" />
+				<p:commandButton ajax="false" value="Login" />
+			</p:panelGrid>
+		</h:form>
+	</div>
+
+</h:body>
+</html>

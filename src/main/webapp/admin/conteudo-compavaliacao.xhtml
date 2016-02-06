@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<f:view contentType="text/html">
+	<h:head>
+		<script type="text/javascript">
+		function confirmarExclusaoAvaliacao(data, aluno, sexo) {
+			if (sexo == "Masculino"){	
+				return window.confirm("Deseja excluir a avaliação do "+ aluno + " feita em "+data[8] + data[9] + "/"+data[5] + data[6] +"/"+ data[0] + data[1] +data[2] +data[3] +"?");	
+				}else{
+					return window.confirm("Deseja excluir a avaliação da "+ aluno + " feita em "+data[8] + data[9] + "/"+data[5] + data[6] +"/"+ data[0] + data[1] +data[2] +data[3] +"?");
+					}
+			
+		}
+	</script>
+
+		<script type="text/javascript">
+			function exportChart() {
+			    //export image
+			    $('#output').empty().append(PF('chart').exportAsImage());
+			    //$('#output').empty().
+			   // $('#output').empty().append(PF('chart').exportAsImage());
+			    
+			    //show the dialog
+			    PF('dlg').show();
+			}
+		</script>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+			<title>PrimeFaces - ShowCase</title>
+		</f:facet>
+
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/css/default.css" />
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+		<style type="text/css">
+.ui-layout-north {
+	z-index: 20 !important;
+	overflow: visible !important;;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+	overflow: visible !important;
+}
+
+.fonteMenor {
+	font-size: 10px !important;
+}
+</style>
+	</h:head>
+
+
+	<h:body>
+
+		<p:growl id="mensagem" showDetail="false" />
+
+		<p:layout fullPage="true">
+
+
+			<p:layoutUnit id="left" position="west" size="270" resizable="true"
+				collapsible="true" minSize="200">
+
+				<h:form id="comparacao">
+
+					<p:panel>
+
+						<p:dataTable id="checkboxAvaliacoes" var="avaliacao"
+							value="#{usuarioControllerMaster.usuario.avaliacoes}"
+							selection="#{usuarioControllerMaster.avaliacoesParaComparar}"
+							rowKey="#{avaliacao.id}" style="margin-bottom:0"
+							rowSelectMode="add">
+
+							<p:column selectionMode="multiple"
+								style="width:16px;text-align:center" />
+
+							<p:column headerText="Avaliações">
+								<p:outputLabel value="#{avaliacao.data}">
+									<f:convertDateTime pattern="dd/MM/YYYY" />
+								</p:outputLabel>
+								<p:commandButton icon="ui-icon-trash"
+									actionListener="#{usuarioControllerMaster.deletar(avaliacao)}" action="#{usuarioControllerMaster.comparar()}"
+									update="graficos, avaliacoesParaComparar, mensagem" style="height:25px; width:25px;margin-left:5px;"
+									onclick="return confirmarExclusaoAvaliacao('#{avaliacao.data}', '#{avaliacao.aluno.nome}', '#{avaliacao.aluno.sexo}')"
+									title="Excluir" />
+
+								<p:commandButton action='#{usuarioControllerMaster.editar(avaliacao, "chama-comparar-avaliacao")}'
+									icon="ui-icon-pencil"
+									style="height:25px; width:25px;margin-left:5px;"
+									ajax="rowSelect" title="Editar" />
+							</p:column>
+
+							<f:facet name="header">
+								<p:commandButton process="checkboxAvaliacoes"
+									update="graficos, avaliacoesParaComparar, mensagem"
+									icon="ui-icon-search" value="Comparar"
+									actionListener="#{usuarioControllerMaster.comparar()}" />
+							</f:facet>
+						</p:dataTable>
+
+					</p:panel>
+
+				</h:form>
+
+			</p:layoutUnit>
+
+			<p:layoutUnit id="center" position="center">
+
+				<h3 style="margin-left: 10px; color: #2e2e1e">Avaliações de
+					<p:link outcome="chama-aluno">#{usuarioControllerMaster.usuario.nome}</p:link></h3>
+
+				<p:dataList id="avaliacoesParaComparar"
+					value="#{usuarioControllerMaster.avaliacoesParaComparar}"
+					var="avaliacao" emptyMessage="Nada encontrado" itemType="disc"
+					paginator="true" rows="10" styleClass="paginated"
+					paginatorAlwaysVisible="false" style="float: left;"
+					rendered="false">
+					<p:outputLabel value="#{avaliacao.data}">
+						<f:convertDateTime pattern="dd/MM/YYYY" />
+					</p:outputLabel>
+				</p:dataList>
+				<h:form id="graficos">
+
+					<h:panelGrid columns="10" style="margin-bottom:10px;"
+						cellpadding="5" styleClass="fonteMenor">
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraGrafico2}"
+							rendered="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraFiltro2}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Histórico da Composição Corporal" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.composicaoCorporalAtual.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.composicaoCorporalAtual.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.composicaoCorporalAtual.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Composição Corporal Atual" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.massaMagraAtual.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.massaMagraAtual.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.massaMagraAtual.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Composição Massa Magra Atual" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoPressaoArterial.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraGrafico2}"
+							rendered="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraFiltro2}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoPressaoArterial.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Histórico da Pressão Arterial" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoFC.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoFC.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoFC.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoFC.mostraGrafico2}"
+							rendered="#{usuarioControllerMaster.graficos.historicoFC.mostraFiltro2}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoFC.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Histórico da Frequência Cardíaca" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoPescoco.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoPescoco.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoPescoco.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Pescoço" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoCinturaEscapular.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoCinturaEscapular.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoCinturaEscapular.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Cintura Escapular" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoToraxica.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoToraxica.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoToraxica.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Torax" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoAbdomen.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoAbdomen.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoAbdomen.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Abdômen" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoCintura.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoCintura.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoCintura.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Cintura" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoQuadril.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoQuadril.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoQuadril.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Quadril" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoCoxa.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoCoxa.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoCoxa.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Coxa" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoPanturrilha.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoPanturrilha.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoPanturrilha.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Panturrilha" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoBraco.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoBraco.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoBraco.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Braço" />
+
+						<p:selectBooleanCheckbox
+							value="#{usuarioControllerMaster.graficos.historicoAntebraco.mostraGrafico}"
+							rendered="#{usuarioControllerMaster.graficos.historicoAntebraco.mostraFiltro}">
+							<p:ajax update="graficos, mensagem"
+								listener="#{usuarioControllerMaster.graficos.historicoAntebraco.filtraGrafico}" />
+						</p:selectBooleanCheckbox>
+						<h:outputText value="Perimetria Antebraço" />
+
+					</h:panelGrid>
+
+					<h:panelGrid id="graficosPanel" columns="1"
+						columnClasses="left,right" style="width:100%">
+						<h:panelGrid columns="1" columnClasses="left,right"
+							style="width:100%">
+							<p:chart type="line"
+								model="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.grafico}"
+								style="width:90%;height:300px;"
+								rendered="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraGrafico}"
+								widgetVar="chart" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.grafico2}"
+								style="width:90%;height:300px;"
+								rendered="#{usuarioControllerMaster.graficos.historicoComposicaoCorporal.mostraGrafico2}"
+								widgetVar="chart" />
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="2" columnClasses="left,right"
+							style="width:100%">
+							<p:chart id="composicaoCorporalAtual" type="pie"
+								model="#{usuarioControllerMaster.graficos.composicaoCorporalAtual.grafico}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.composicaoCorporalAtual.mostraGrafico}" />
+							<p:chart type="pie"
+								model="#{usuarioControllerMaster.graficos.massaMagraAtual.grafico}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.massaMagraAtual.mostraGrafico}" />
+							<p:chart type="line"
+								model="#{usuarioControllerMaster.graficos.historicoPressaoArterial.grafico}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoPressaoArterial.grafico2}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.historicoPressaoArterial.mostraGrafico2}" />
+							<p:chart type="line"
+								model="#{usuarioControllerMaster.graficos.historicoFC.grafico}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.historicoFC.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoFC.grafico2}"
+								style="width:400px;height:200"
+								rendered="#{usuarioControllerMaster.graficos.historicoFC.mostraGrafico2}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="2" columnClasses="left,right"
+							style="width:100%">
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoPescoco.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoPescoco.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoCinturaEscapular.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoCinturaEscapular.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoToraxica.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoToraxica.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoAbdomen.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoAbdomen.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoCintura.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoCintura.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoQuadril.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoQuadril.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoCoxa.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoCoxa.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoPanturrilha.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoPanturrilha.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoBraco.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoBraco.mostraGrafico}" />
+							<p:chart type="bar"
+								model="#{usuarioControllerMaster.graficos.historicoAntebraco.grafico}"
+								style="width:400px;height:200px"
+								rendered="#{usuarioControllerMaster.graficos.historicoAntebraco.mostraGrafico}" />
+						</h:panelGrid>
+
+					</h:panelGrid>
+
+				</h:form>
+
+
+			</p:layoutUnit>
+
+		</p:layout>
+
+	</h:body>
+
+</f:view>
+</html>

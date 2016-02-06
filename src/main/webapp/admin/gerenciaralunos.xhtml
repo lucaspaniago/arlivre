@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:head>
+
+	<title>Cadastro de Usuários</title>
+
+	<script type="text/javascript">
+		function confirmarExclusao(nome, sexo) {
+			if(sexo == "Feminino")
+				return window.confirm("Deseja excluir a " + nome + "?");
+			else
+				return window.confirm("Deseja excluir o " + nome + "????");
+		}
+	</script>
+
+	<script type="text/javascript">
+		PrimeFaces.locales['pt'] = {
+		    closeText: 'Fechar',
+		    prevText: 'Anterior',
+		    nextText: 'Próximo',
+		    currentText: 'Começo',
+		    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+		    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],
+		    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+		    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+		    dayNamesMin: ['D','S','T','Q','Q','S','S'],
+		    weekHeader: 'Semana',
+		    firstDay: 0,
+		    isRTL: false,
+		    showMonthAfterYear: false,
+		    yearSuffix: '',
+		    timeOnlyTitle: 'Só Horas',
+		    timeText: 'Tempo',
+		    hourText: 'Hora',
+		    minuteText: 'Minuto',
+		    secondText: 'Segundo',
+		    ampm: false,
+		    month: 'Mês',
+		    week: 'Semana',
+		    day: 'Dia',
+		    allDayText : 'Todo o Dia'
+		};
+	</script>
+
+</h:head>
+
+<h:body onload="#{usuarioControllerMaster.mensagens()}">
+
+	<ui:include src="/admin/menu.xhtml" />
+
+	<h:form id="listagem">
+		<p:growl id="mensagem" showDetail="false" autoUpdate="true"
+			rendered="#usuarioControllerMaster.algoSalvo()" />
+		<p:panel header="Lista de Alunos">
+
+			<p:dataTable id="lista-usuarios"
+				value="#{usuarioControllerMaster.usuarios}" var="usuario"
+				selectionMode="single" rowKey="#{usuario.id}" paginator="true"
+				rows="5" emptyMessage="Nada encontrado" reflow="true"
+				paginatorAlwaysVisible="false">
+
+				<p:ajax event="rowSelect"
+					listener="#{usuarioControllerMaster.editarAluno}" />
+
+				<p:column headerText="ID" width="50" filterBy="#{usuario.id}">
+					#{usuario.id}
+				</p:column>
+
+				<p:column headerText="Perfil" filterBy="#{usuario.perfil.descricao}">
+					#{usuario.perfil.descricao}
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{usuario.nome}"
+					filterMatchMode="contains">
+					#{usuario.nome}
+				</p:column>
+
+				<p:column headerText="Login" filterBy="#{usuario.login}">
+					#{usuario.login}
+				</p:column>
+
+				<p:column headerText="Data de nascimento">
+					<!-- Aqui eu usei o outputLabel para poder usar o converterDateTime -->
+					<p:outputLabel value="#{usuario.dataDeNascimento}">
+						<f:convertDateTime pattern="dd/MM/YYYY" />
+					</p:outputLabel>
+				</p:column>
+
+				<p:column headerText="Senha">
+					#{usuario.senha}
+				</p:column>
+
+				<p:column headerText="Ação">
+					<p:commandButton
+						actionListener="#{usuarioControllerMaster.deletar(usuario)}"
+						value="Excluir" update="@form"
+						onclick="return confirmarExclusao('#{usuario.nome}', '#{usuario.sexo}')" />
+
+					<p:commandButton action='#{usuarioControllerMaster.editarAluno(usuario, "chama-gerenciar-alunos")}'
+						value="Editar" ajax="rowSelect" />
+
+					<p:commandButton action="chama-aluno.xhtml"
+						actionListener="#{usuarioControllerMaster.verPaginaAluno(usuario)}"
+						value="Ver Perfil" ajax="rowSelect" />
+				</p:column>
+
+
+
+				<p:column headerText="Avaliações">
+
+					<p:commandButton action='#{usuarioControllerMaster.novaAvaliacao(usuario, "chama-gerenciar-alunos")}' value="Nova" ajax="rowSelect" />
+
+					<p:commandButton
+						value="Todas" ajax="rowSelect" />
+
+				</p:column>
+
+
+			</p:dataTable>
+
+
+		</p:panel>
+
+	</h:form>
+
+</h:body>
+</html>

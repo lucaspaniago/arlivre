@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:head>
+
+	<title>Cadastro de Avaliações</title>
+
+	<script type="text/javascript">
+		function confirmarExclusao(nome) {
+			return window.confirm("Deseja excluir o " + nome + "?");
+		}
+	</script>
+
+	<script type="text/javascript">
+		PrimeFaces.locales['pt'] = {
+		    closeText: 'Fechar',
+		    prevText: 'Anterior',
+		    nextText: 'Próximo',
+		    currentText: 'Começo',
+		    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+		    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],
+		    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+		    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+		    dayNamesMin: ['D','S','T','Q','Q','S','S'],
+		    weekHeader: 'Semana',
+		    firstDay: 0,
+		    isRTL: false,
+		    showMonthAfterYear: false,
+		    yearSuffix: '',
+		    timeOnlyTitle: 'Só Horas',
+		    timeText: 'Tempo',
+		    hourText: 'Hora',
+		    minuteText: 'Minuto',
+		    secondText: 'Segundo',
+		    ampm: false,
+		    month: 'Mês',
+		    week: 'Semana',
+		    day: 'Dia',
+		    allDayText : 'Todo o Dia'
+		};
+	</script>
+
+</h:head>
+
+<h:body>
+
+
+	<div class="ui-fluid">
+
+		<h:form id="form-avaliacao" prependId="false"
+			style="margin-bottom: 5px;">
+			<p:growl id="mensagem" showDetail="false" />
+
+			<p:panel id="dadosAvaliacao">
+				<f:facet name="header">
+					Avaliação - #{avaliacaoController.aluno.nome} -
+					
+					<p:outputLabel
+						value="#{avaliacaoController.avaliacao.aluno.dataDeNascimento}"
+						pattern="dd/MM/yyyy">
+
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+
+					</p:outputLabel>
+
+
+				</f:facet>
+
+				<p:panelGrid columns="2" cellpadding="5">
+
+					<f:facet name="header">
+
+						<p:outputLabel value="Informações" />
+
+					</f:facet>
+
+					<p:outputLabel for="aluno" value="Aluno:" />
+					<p:outputLabel id="aluno"
+						value="#{avaliacaoController.avaliacao.aluno.nome}" />
+
+					<p:outputLabel for="dataNascimento" value="Data de nascimento:"
+						pattern="dd/MM/yyyy" />
+					<p:outputLabel id="dataNascimento"
+						value="#{avaliacaoController.avaliacao.aluno.dataDeNascimento}">
+
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+
+					</p:outputLabel>
+
+					<p:outputLabel for="idade" value="Idade:" />
+					<p:outputLabel id="idade"
+						value="#{avaliacaoController.avaliacao.idade}" />
+
+					<p:outputLabel for="data" value="Data da Avaliação:" />
+					<p:outputLabel id="data"
+						value="#{avaliacaoController.avaliacao.data}">
+
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+
+					</p:outputLabel>
+
+					<p:outputLabel for="hora" value="Hora da avaliação:" />
+					<p:outputLabel id="hora"
+						value="#{avaliacaoController.avaliacao.hora}">
+
+						<f:convertDateTime pattern="HH:mm" />
+
+					</p:outputLabel>
+
+					<p:outputLabel for="fcRepouso"
+						value="Frequência Cardíaca de Repouso:" />
+					<p:outputLabel id="fcRepouso"
+						value="#{avaliacaoController.avaliacao.fcRepouso}">
+						<f:convertNumber pattern="##0 bpm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="pa" value="Pressão Arterial em Repouso:" />
+					<p:outputPanel id="pa">
+
+						<p:outputLabel value="#{avaliacaoController.avaliacao.pasRepouso}">
+							<f:convertNumber pattern="##0/" />
+						</p:outputLabel>
+						<p:outputLabel value="#{avaliacaoController.avaliacao.padRepouso}">
+							<f:convertNumber pattern="### mmHg" />
+						</p:outputLabel>
+
+					</p:outputPanel>
+
+				</p:panelGrid>
+
+
+				<p:separator />
+
+
+				<p:panelGrid columns="4" cellpadding="5">
+
+					<f:facet name="header">
+
+						<p:outputLabel value="Perimetria" />
+
+					</f:facet>
+
+					<p:outputLabel for="altura" value="Altura:" />
+					<p:outputLabel id="altura"
+						value="#{avaliacaoController.avaliacao.perimetria.altura}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="pescoco" value="Pescoço:" />
+					<p:outputLabel id="pescoco"
+						value="#{avaliacaoController.avaliacao.perimetria.pescoco}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="cinturaEscapular" value="Cintura Escapular:" />
+					<p:outputLabel id="cinturaEscapular"
+						value="#{avaliacaoController.avaliacao.perimetria.cinturaEscapular}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="toraxica" value="Toráxica:" />
+					<p:outputLabel id="toraxica"
+						value="#{avaliacaoController.avaliacao.perimetria.toraxica}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="abdomen" value="Abdômen:" />
+					<p:outputLabel id="abdomen"
+						value="#{avaliacaoController.avaliacao.perimetria.abdomen}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="cintura" value="Cintura:" />
+					<p:outputLabel id="cintura"
+						value="#{avaliacaoController.avaliacao.perimetria.cintura}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="quadril" value="Quadril:" />
+					<p:outputLabel id="quadril"
+						value="#{avaliacaoController.avaliacao.perimetria.quadril}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="coxaDireita" value="Coxa Direita:" />
+					<p:outputLabel id="coxaDireita"
+						value="#{avaliacaoController.avaliacao.perimetria.coxaDireita}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="coxaEsquerda" value="Coxa Esquerda:" />
+					<p:outputLabel id="coxaEsquerda"
+						value="#{avaliacaoController.avaliacao.perimetria.coxaEsquerda}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="panturrilhaDireita"
+						value="Panturrilha Direita:" />
+					<p:outputLabel id="panturrilhaDireita"
+						value="#{avaliacaoController.avaliacao.perimetria.panturrilhaDireita}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="panturrilhaEsquerda"
+						value="Panturrilha Esquerda:" />
+					<p:outputLabel id="panturrilhaEsquerda"
+						value="#{avaliacaoController.avaliacao.perimetria.panturrilhaEsquerda}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="bracoDireito" value="Braço Direito:" />
+					<p:outputLabel id="bracoDireito"
+						value="#{avaliacaoController.avaliacao.perimetria.bracoDireito}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="bracoEsquerdo" value="Braço Esquerdo:" />
+					<p:outputLabel id="bracoEsquerdo"
+						value="#{avaliacaoController.avaliacao.perimetria.bracoEsquerdo}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="antebracoDireito" value="Antebraço Direito:" />
+					<p:outputLabel id="antebracoDireito"
+						value="#{avaliacaoController.avaliacao.perimetria.antebracoDireito}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<h:outputLabel for="antebracoEsquerdo" value="Antebraço Esquerdo:" />
+					<p:outputLabel id="antebracoEsquerdo"
+						value="#{avaliacaoController.avaliacao.perimetria.antebracoEsquerdo}">
+						<f:convertNumber pattern="##0.0 cm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="icq" value="ICQ:" />
+					<h:outputText id="icq"
+						value="#{avaliacaoController.avaliacao.perimetria.icq}">
+						<f:convertNumber maxFractionDigits="2" />
+					</h:outputText>
+
+				</p:panelGrid>
+
+
+				<p:separator />
+
+
+				<p:panelGrid columns="4" cellpadding="5">
+
+					<f:facet name="header">
+
+						<p:outputLabel value="Composição Corporal" />
+
+					</f:facet>
+
+					<p:outputLabel for="peso" value="Peso:" />
+					<p:outputLabel id="peso"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.peso}">
+						<f:convertNumber pattern="##0.0 kg" />
+					</p:outputLabel>
+
+					<p:outputLabel for="tricipital" value="Tricipital:" />
+					<p:outputLabel id="tricipital"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.tricipital}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="bicipital" value="Bicipital:" />
+					<p:outputLabel id="bicipital"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.bicipital}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="subescapular" value="Subescapular:" />
+					<p:outputLabel id="subescapular"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.subescapular}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="peitoral" value="Peitoral:" />
+					<p:outputLabel id="peitoral"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.peitoral}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="axilarMedia" value="Axilar Média:" />
+					<p:outputLabel id="axilarMedia"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.axilarMedia}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="supraIliaca" value="Supra Ilíaca:" />
+					<p:outputLabel id="supraIliaca"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.supraIliaca}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="abdominal" value="Abdominal:" />
+					<p:outputLabel id="abdominal"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.abdominal}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="coxaMedial" value="Coxa Medial:" />
+					<p:outputLabel id="coxaMedial"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.coxaMedial}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="panturrilhaMedial" value="Panturrilha Medial:" />
+					<p:outputLabel id="panturrilhaMedial"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.panturrilhaMedial}">
+						<f:convertNumber pattern="##0.0 mm" />
+					</p:outputLabel>
+
+					<p:outputLabel for="imc" value="IMC:" />
+					<p:outputLabel id="imc"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.imc}">
+						<f:convertNumber maxFractionDigits="2" />
+					</p:outputLabel>
+
+					<p:outputLabel for="percentualDeGordura"
+						value="Percentual de Gordura:" />
+					<p:outputPanel>
+
+						<p:outputLabel id="percentualDeGordura"
+							value="#{avaliacaoController.avaliacao.composicaoCorporal.percentualDeGordura}">
+							<f:convertNumber pattern="##0.0" />
+						</p:outputLabel>
+						<p:outputLabel value="%" />
+
+					</p:outputPanel>
+
+					<p:outputLabel for="massaMagra" value="Massa Magra:" />
+					<p:outputLabel id="massaMagra"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.massaMagra}">
+						<f:convertNumber maxFractionDigits="2" pattern="##0.00 kg" />
+					</p:outputLabel>
+
+					<p:outputLabel for="massaGorda" value="Massa Gorda:" />
+					<p:outputLabel id="massaGorda"
+						value="#{avaliacaoController.avaliacao.composicaoCorporal.massaGorda}">
+						<f:convertNumber maxFractionDigits="2" pattern="##0.00 kg" />
+					</p:outputLabel>
+
+				</p:panelGrid>
+
+				<p:panelGrid>
+
+					<p:commandButton value="Salvar" action="avaliacao.xhtml"
+						actionListener="#{avaliacaoController.salvar}" />
+
+					<p:commandButton
+						actionListener="#{avaliacaoController.prepararInclusao()}"
+						value="Limpar" update="@form" />
+
+				</p:panelGrid>
+
+
+			</p:panel>
+
+		</h:form>
+
+	</div>
+
+</h:body>
+</html>

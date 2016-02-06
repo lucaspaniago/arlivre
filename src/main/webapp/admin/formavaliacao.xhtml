@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:head>
+
+	<title>Cadastro de Avaliações</title>
+
+	<script type="text/javascript">
+		function confirmarExclusao(nome) {
+			return window.confirm("Deseja excluir o " + nome + "?");
+		}
+
+		function selecionaTexto()
+        {
+			//return window.confirm("lokoooooooooooa");
+			document.getElementById('aluno').focus();
+        }
+		
+	</script>
+
+	<script type="text/javascript">
+		PrimeFaces.locales['pt'] = {
+		    closeText: 'Fechar',
+		    prevText: 'Anterior',
+		    nextText: 'Próximo',
+		    currentText: 'Começo',
+		    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+		    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],
+		    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+		    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],
+		    dayNamesMin: ['D','S','T','Q','Q','S','S'],
+		    weekHeader: 'Semana',
+		    firstDay: 0,
+		    isRTL: false,
+		    showMonthAfterYear: false,
+		    yearSuffix: '',
+		    timeOnlyTitle: 'Só Horas',
+		    timeText: 'Tempo',
+		    hourText: 'Hora',
+		    minuteText: 'Minuto',
+		    secondText: 'Segundo',
+		    ampm: false,
+		    month: 'Mês',
+		    week: 'Semana',
+		    day: 'Dia',
+		    allDayText : 'Todo o Dia'
+		};
+	</script>
+
+</h:head>
+
+<h:body onload="selecionaTexto()">
+
+	<ui:include src="/admin/menu.xhtml" />
+
+	<div class="ui-fluid">
+
+		<h:form id="form-avaliacao" prependId="false"
+			style="margin-bottom: 5px;">
+			<p:growl id="mensagem" showDetail="false" />
+
+			<p:panel id="dadosAvaliacao" header="Cadastro de Avaliações"
+				toggleable="true" closable="false" toggleSpeed="500"
+				closeSpeed="500" widgetVar="panelDadosAvaliacao">
+
+				<p:ajax event="close" listener="#{dadosAvaliacaoPanelView.onClose}"
+					update="mensagem" />
+				<p:ajax event="toggle"
+					listener="#{dadosAvaliacaoPanelView.onToggle}" update="mensagem" />
+
+				<h:panelGrid columns="2" cellpadding="5">
+
+					<p:outputLabel for="aluno" value="Aluno:" />
+					<p:outputPanel id="nomeAutoComplete">
+						<p:focus context="nomeAutoComplete"/>
+						<p:autoComplete id="aluno"
+							completeMethod="#{usuarioControllerMaster.buscaNomesDeUsuarios}"
+							value="#{usuarioControllerMaster.avaliacao.aluno}" var="aluno"
+							itemLabel="#{aluno.nome}" itemValue="#{aluno}"
+							placeholder="Digite o nome" required="true"
+							requiredMessage="Digite o nome." converter="#{usuarioConverter}"
+							forceSelection="true" autoHighlight="true" >
+
+							<p:ajax event="itemSelect"
+								listener="#{usuarioControllerMaster.setAlunoDaAvaliacao}"
+								update="idade,dataNascimento,percentualDeGordura,@form" />
+
+							
+							<f:facet name="itemtip">
+								<h:panelGrid columns="2" cellpadding="5">
+									<f:facet name="header">
+										<h:outputText style="margin-left:50px" />
+									</f:facet>
+
+									<h:outputText value="Login:" />
+									<h:outputText value="#{aluno.login}" />
+
+									<h:outputText value="Senha:" />
+									<h:outputText value="#{aluno.senha}" />
+								</h:panelGrid>
+							</f:facet>
+
+						</p:autoComplete>
+
+						<p:button value="Adicionar novo aluno" outcome="formusuario.xhtml"
+							styleClass="ui-priority-primary" style="margin-left:10px" />
+
+					</p:outputPanel>
+
+					<p:outputLabel for="dataNascimento" value="Data de nascimento:"
+						rendered="#{usuarioControllerMaster.avaliacaoTemAluno}" pattern="dd/MM/yyyy" />
+					<p:outputPanel id="dataNascimento"
+						rendered="#{usuarioControllerMaster.avaliacaoTemAluno}">
+
+						<p:outputLabel
+							value="#{usuarioControllerMaster.avaliacao.aluno.dataDeNascimento}"
+							pattern="dd/MM/yyyy">
+
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+
+						</p:outputLabel>
+
+					</p:outputPanel>
+
+					<p:outputLabel for="idade" value="Idade:"
+						rendered="#{usuarioControllerMaster.avaliacaoTemAluno}" />
+					<p:outputLabel id="idade"
+						value="#{usuarioControllerMaster.avaliacao.idade}"
+						rendered="#{usuarioControllerMaster.avaliacaoTemAluno}" />
+
+					<p:outputLabel for="data" value="Data da Avaliação:" />
+					<p:inplace id="data" editor="true">
+
+						<p:calendar value="#{usuarioControllerMaster.avaliacao.data}"
+							locale="pt" pattern="dd/MM/yyyy" mask="true"
+							converterMessage="Digite uma data válida."
+							placeholder="Digite..."
+							requiredMessage="Digite a data da avaliação."
+							validatorMessage="Digite uma data válida." required="true"
+							timeZone="America/Sao_Paulo">
+
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+
+							<p:ajax listener="#{usuarioControllerMaster.setIdadeDaAvaliacao}"
+								update="idade,dataNascimento,@form" />
+
+						</p:calendar>
+
+					</p:inplace>
+
+					<p:outputLabel for="hora" value="Hora da avaliação:" />
+					<p:inplace id="hora" editor="true">
+
+						<p:calendar value="#{usuarioControllerMaster.avaliacao.hora}"
+							pattern="HH:mm" timeOnly="true" required="true">
+
+							<f:convertDateTime pattern="#{component.pattern}" />
+
+						</p:calendar>
+
+					</p:inplace>
+
+					<p:outputLabel for="fcRepouso"
+						value="Frequência Cardíaca de Repouso:" />
+					<pe:inputNumber id="fcRepouso"
+						value="#{usuarioControllerMaster.avaliacao.fcRepouso}" symbol=" bpm"
+						symbolPosition="s" decimalPlaces="0" onclick="this.select()" />
+
+					<p:outputLabel for="pasRepouso"
+						value="Pressão Arterial em Repouso:" />
+					<p:outputPanel>
+
+						<p:outputLabel for="pasRepouso" value="Sistólica:" />
+						<pe:inputNumber id="pasRepouso"
+							value="#{usuarioControllerMaster.avaliacao.pasRepouso}"
+							decimalPlaces="0" onclick="this.select()" />
+
+						<p:outputLabel for="padRepouso" value="Diastólica:"
+							style="margin-left: 5px" />
+						<pe:inputNumber id="padRepouso"
+							value="#{usuarioControllerMaster.avaliacao.padRepouso}"
+							decimalPlaces="0" onclick="this.select()" />
+
+						<p:outputLabel value="mmHg" style="margin-left: 5px" />
+
+					</p:outputPanel>
+
+				</h:panelGrid>
+
+				<f:facet name="options">
+					<p:menu>
+						<p:submenu label="Settings">
+							<p:menuitem value="Toggle" url="#" icon="ui-icon-newwin"
+								onclick="PF('panelDadosAvaliacao').toggle()" />
+							<p:menuitem value="Remove" url="#" icon="ui-icon-close"
+								onclick="PF('panelDadosAvaliacao').close()" />
+						</p:submenu>
+					</p:menu>
+				</f:facet>
+
+			</p:panel>
+
+			<p:panel id="perimetria" header="Perimetria" toggleable="true"
+				closable="false" toggleSpeed="500" closeSpeed="500"
+				widgetVar="panelPerimetria">
+
+				<p:ajax event="close" listener="#{perimetriaPanelView.onClose}"
+					update="mensagem" />
+				<p:ajax event="toggle" listener="#{perimetriaPanelView.onToggle}"
+					update="mensagem" />
+
+				<h:panelGrid columns="4" cellpadding="5">
+
+					<h:outputLabel for="altura" value="Altura:" />
+					<pe:inputNumber id="altura"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.altura}"
+						symbol=" cm" symbolPosition="s" decimalPlaces="1" onclick="this.select()">
+
+						<p:ajax listener="#{usuarioControllerMaster.setImc}"
+							update="imc, mensagem" />
+
+					</pe:inputNumber>
+
+					<h:outputLabel for="pescoco" value="Pescoço:" />
+					<pe:inputNumber id="pescoco"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.pescoco}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+
+					<h:outputLabel for="cinturaEscapular" value="Cintura Escapular:" />
+					<pe:inputNumber id="cinturaEscapular"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.cinturaEscapular}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="toraxica" value="Toráxica:" />
+					<pe:inputNumber id="toraxica"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.toraxica}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="abdomen" value="Abdômen:" />
+					<pe:inputNumber id="abdomen"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.abdomen}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="cintura" value="Cintura:" />
+					<pe:inputNumber id="cintura"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.cintura}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" >
+
+						<p:ajax listener="#{usuarioControllerMaster.setIcq}"
+							update="icq, mensagem" />
+
+					</pe:inputNumber>
+
+					<h:outputLabel for="quadril" value="Quadril:" />
+					<pe:inputNumber id="quadril"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.quadril}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" >
+
+						<p:ajax listener="#{usuarioControllerMaster.setIcq}"
+							update="icq, mensagem" />
+
+					</pe:inputNumber>
+
+					<p:outputLabel for="icq" value="ICQ:" />
+					<h:outputText id="icq"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.icq}">
+						<f:convertNumber maxFractionDigits="2" />
+
+					</h:outputText>
+
+					<h:outputLabel for="coxaEsquerda" value="Coxa Esquerda:" />
+					<pe:inputNumber id="coxaEsquerda"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.coxaEsquerda}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="coxaDireita" value="Coxa Direita:" />
+					<pe:inputNumber id="coxaDireita"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.coxaDireita}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="panturrilhaEsquerda"
+						value="Panturrilha Esquerda:" />
+					<pe:inputNumber id="panturrilhaEsquerda"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.panturrilhaEsquerda}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="panturrilhaDireita"
+						value="Panturrilha Direita:" />
+					<pe:inputNumber id="panturrilhaDireita"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.panturrilhaDireita}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="bracoEsquerdo" value="Braço Esquerdo:" />
+					<pe:inputNumber id="bracoEsquerdo"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.bracoEsquerdo}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="bracoDireito" value="Braço Direito:" />
+					<pe:inputNumber id="bracoDireito"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.bracoDireito}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="antebracoEsquerdo" value="Antebraço Esquerdo:" />
+					<pe:inputNumber id="antebracoEsquerdo"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.antebracoEsquerdo}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="antebracoDireito" value="Antebraço Direito:" />
+					<pe:inputNumber id="antebracoDireito"
+						value="#{usuarioControllerMaster.avaliacao.perimetria.antebracoDireito}"
+						symbol=" cm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+				</h:panelGrid>
+
+				<f:facet name="options">
+					<p:menu>
+						<p:submenu label="Settings">
+							<p:menuitem value="Toggle" url="#" icon="ui-icon-newwin"
+								onclick="PF('panelPerimetria').toggle()" />
+							<p:menuitem value="Remove" url="#" icon="ui-icon-close"
+								onclick="PF('panelPerimetria').close()" />
+						</p:submenu>
+					</p:menu>
+				</f:facet>
+			</p:panel>
+
+			<p:panel id="composicaoCorporal" header="Composição Corporal"
+				toggleable="true" closable="fase" toggleSpeed="500" closeSpeed="500"
+				widgetVar="panelComposicaoCorporal" style="margin-bottom:20px">
+
+				<p:ajax event="close"
+					listener="#{composicaoCorporalPanelView.onClose}" update="mensagem" />
+				<p:ajax event="toggle"
+					listener="#{composicaoCorporalPanelView.onToggle}"
+					update="mensagem" />
+
+				<h:panelGrid columns="4" cellpadding="5">
+
+					<h:outputLabel for="peso" value="Peso:" />
+					<pe:inputNumber id="peso"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.peso}"
+						symbol=" kg" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" >
+
+						<p:ajax listener="#{usuarioControllerMaster.setImc}"
+							update="imc, mensagem" />
+
+						<p:ajax listener="#{usuarioControllerMaster.calcularMassaGordaEMagra}"
+							update="massaMagra, massaGorda, mensagem, @this" />
+
+					</pe:inputNumber>
+
+					<h:outputLabel for="tricipital" value="Tricipital:" />
+					<pe:inputNumber id="tricipital"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.tricipital}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="bicipital" value="Bicipital:" />
+					<pe:inputNumber id="bicipital"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.bicipital}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="subescapular" value="Subescapular:" />
+					<pe:inputNumber id="subescapular"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.subescapular}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="peitoral" value="Peitoral:" />
+					<pe:inputNumber id="peitoral"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.peitoral}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="axilarMedia" value="Axilar Média:" />
+					<pe:inputNumber id="axilarMedia"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.axilarMedia}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="supraIliaca" value="Supra Ilíaca:" />
+					<pe:inputNumber id="supraIliaca"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.supraIliaca}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="abdominal" value="Abdominal:" />
+					<pe:inputNumber id="abdominal"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.abdominal}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="coxaMedial" value="Coxa Medial:" />
+					<pe:inputNumber id="coxaMedial"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.coxaMedial}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="panturrilhaMedial" value="Panturrilha Medial:" />
+					<pe:inputNumber id="panturrilhaMedial"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.panturrilhaMedial}"
+						symbol=" mm" symbolPosition="s" minValue="0" decimalPlaces="1" onclick="this.select()" />
+
+					<h:outputLabel for="imc" value="IMC:" />
+					<h:outputText id="imc"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.imc}">
+
+						<f:convertNumber maxFractionDigits="2" />
+
+					</h:outputText>
+
+					<h:outputLabel for="percentualDeGordura"
+						value="Percentual de Gordura:" />
+					<p:outputPanel id="percentualDados">
+
+						<pe:inputNumber id="percentualDeGordura"
+							value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.percentualDeGordura}"
+							decimalPlaces="2" symbol="%" symbolPosition="s" onclick="this.select()" >
+							<p:ajax
+								listener="#{usuarioControllerMaster.calcularMassaGordaEMagra}"
+								update="massaMagra, massaGorda, mensagem, @this" />
+						</pe:inputNumber>
+
+						<p:commandButton value="Calcular com Pollock 7 Dobras"
+							update="percentualDados,massaMagra, massaGorda,mensagem"
+							actionListener="#{usuarioControllerMaster.calcularPercentualDeGordura}"
+							styleClass="ui-priority-primary" style="margin-left:10px" />
+
+					</p:outputPanel>
+
+					<h:outputLabel for="massaMagra" value="Massa Magra:" />
+					<pe:inputNumber id="massaMagra"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.massaMagra}"
+						symbol=" kg" symbolPosition="s" minValue="0" decimalPlaces="2" onclick="this.select()" />
+
+					<h:outputLabel for="percentualMuscular"
+						value="Percentual Muscular:" />
+					<pe:inputNumber id="percentualMuscular"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.percentualMuscular}"
+						decimalPlaces="2" symbol="%" symbolPosition="s" onclick="this.select()">
+						<p:ajax listener="#{usuarioControllerMaster.calcularMassaMuscular}"
+							update="massaMagra, massaGorda, mensagem, massaMuscular, @this" />
+					</pe:inputNumber>
+
+					<h:outputLabel for="massaGorda" value="Massa Gorda:" />
+					<pe:inputNumber id="massaGorda"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.massaGorda}"
+						symbol=" kg" symbolPosition="s" minValue="0" decimalPlaces="2" onclick="this.select()" />
+
+					<h:outputLabel for="massaMuscular" value="Massa Muscular:" />
+					<h:outputText id="massaMuscular"
+						value="#{usuarioControllerMaster.avaliacao.composicaoCorporal.massaMuscular}">
+						<f:convertNumber maxFractionDigits="2" pattern=". kg" />
+					</h:outputText>
+				</h:panelGrid>
+
+				<f:facet name="options">
+					<p:menu>
+						<p:submenu label="Settings">
+							<p:menuitem value="Toggle" url="#" icon="ui-icon-newwin"
+								onclick="PF('panelComposicaoCorporal').toggle()" />
+							<p:menuitem value="Remove" url="#" icon="ui-icon-close"
+								onclick="PF('panelComposicaoCorporal').close()" />
+						</p:submenu>
+					</p:menu>
+				</f:facet>
+			</p:panel>
+
+			<p:panelGrid>
+
+				<!-- 					Salvar pode ter um notification bar -->
+
+				<p:commandButton value="Salvar" action="#{usuarioControllerMaster.salvarAvaliacao()}"
+					update="mensagem" />
+
+			</p:panelGrid>
+
+		</h:form>
+
+	</div>
+
+</h:body>
+</html>

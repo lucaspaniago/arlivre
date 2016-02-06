@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<h:form id="listagem">
+
+
+		<p:panel header="Lista de Usuários">
+
+			<p:dataTable id="lista-usuarios"
+				value="#{usuarioController.usuarios}" var="usuario"
+				selectionMode="single" rowKey="#{usuario.id}" paginator="true"
+				rows="5" emptyMessage="Nada encontrado" reflow="true"
+				paginatorAlwaysVisible="false">
+
+				<p:ajax event="rowSelect"
+					listener="#{usuarioController.prepararEdicao}"
+					update="form-cadastro" />
+
+				<p:column headerText="ID" width="50" filterBy="#{usuario.id}">
+					#{usuario.id}
+				</p:column>
+
+				<p:column headerText="Perfil" filterBy="#{usuario.perfil.descricao}">
+					#{usuario.perfil.descricao}
+				</p:column>
+
+				<p:column headerText="Nome" filterBy="#{usuario.nome}"
+					filterMatchMode="contains">
+					#{usuario.nome}
+				</p:column>
+
+				<p:column headerText="Login" filterBy="#{usuario.login}">
+					#{usuario.login}
+				</p:column>
+
+				<p:column headerText="Data de nascimento">
+					<!-- Aqui eu usei o outputLabel para poder usar o converterDateTime -->
+					<p:outputLabel value="#{usuario.dataDeNascimento}">
+						<f:convertDateTime pattern="dd/MM/YYYY" />
+					</p:outputLabel>
+				</p:column>
+
+				<p:column headerText="Senha">
+					#{usuario.senha}
+				</p:column>
+
+				<p:column headerText="Ação">
+					<p:commandButton
+						actionListener="#{usuarioController.excluir(usuario)}"
+						value="Excluir" update="@form"
+						onclick="return confirmarExclusao('#{usuario.nome}')" />
+
+					<p:commandButton
+						actionListener="#{usuarioController.editar(usuario)}"
+						value="Editar" update="form-cadastro" ajax="rowSelect" />
+				</p:column>
+
+
+
+				<p:column headerText="Avaliações">
+
+					<p:commandButton action="formavaliacao.xhtml"
+						actionListener="#{avaliacaoController.prepararInclusao(usuario)}"
+						value="Nova" ajax="rowSelect" />
+					
+					<p:commandButton action="formavaliacao.xhtml"
+						actionListener="#{avaliacaoController.prepararInclusao(usuario)}"
+						value="Todas" ajax="rowSelect" />
+
+				</p:column>
+
+
+			</p:dataTable>
+
+
+		</p:panel>
+
+	</h:form>
+</html>

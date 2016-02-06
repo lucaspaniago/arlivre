@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions" lang="en">
+<!-- USAR ISSO PRA QUALQUER PAGINA HTML DAQUI PRA FRENTE -->
+
+<f:view contentType="text/html">
+	<h:head>
+		<script type="text/javascript">
+		function confirmarExclusaoAvaliacao(data, aluno, sexo) {
+			if (sexo == "Masculino"){
+				return window.confirm("Deseja excluir a avaliação do "+ aluno + " feita em "+data[8] + data[9] + "/"+data[5] + data[6] +"/"+ data[0] + data[1] +data[2] +data[3] +"?");	
+				}else{
+					return window.confirm("Deseja excluir a avaliação da "+ aluno + " feita em "+data[8] + data[9] + "/"+data[5] + data[6] +"/"+ data[0] + data[1] +data[2] +data[3] +"?");
+					}
+			
+		}
+	</script>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+			<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+			<title>PrimeFaces - ShowCase</title>
+		</f:facet>
+
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/css/default.css" />
+		<link type="text/css" rel="stylesheet"
+			href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+		<style type="text/css">
+.ui-layout-north {
+	z-index: 20 !important;
+	overflow: visible !important;;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+	overflow: visible !important;
+}
+</style>
+	</h:head>
+
+	<h:body>
+
+		<p:layout fullPage="true">
+
+
+			<p:layoutUnit id="left" position="west" size="360" resizable="true"
+				collapsible="true" header="#{usuarioControllerMaster.usuario.nome}"
+				minSize="200">
+
+				<h:form id="listagem_avaliacoes">
+					<p:growl id="mensagem" showDetail="false" autoUpdate="true"
+						rendered="#{usuarioControllerMaster.algoSalvo()}" />
+					<p:panel>
+
+						<f:facet name="header">
+							<p:outputLabel
+								value="#{usuarioControllerMaster.numeroDeAvaliacoes()} avaliações realizadas" />
+						</f:facet>
+
+						<p:dataList id="todasAsAvaliacoes"
+							value="#{usuarioControllerMaster.usuario.avaliacoes}"
+							var="avaliacao" emptyMessage="Nada encontrado" itemType="disc"
+							paginator="true" rows="10" styleClass="paginated"
+							paginatorAlwaysVisible="false">
+							<p:outputLabel value="#{avaliacao.data}">
+								<f:convertDateTime pattern="dd/MM/YYYY" />
+							</p:outputLabel>
+							<p:commandButton icon="ui-icon-trash"
+								actionListener="#{usuarioControllerMaster.deletar(avaliacao)}"
+								update="listagem_avaliacoes"
+								style="height:25px; width:25px;margin-left:5px;"
+								onclick="return confirmarExclusaoAvaliacao('#{avaliacao.data}', '#{avaliacao.aluno.nome}', '#{avaliacao.aluno.sexo}')"
+								title="Excluir" />
+
+							<p:commandButton
+								action='#{usuarioControllerMaster.editar(avaliacao, "chama-aluno")}'
+								icon="ui-icon-pencil"
+								style="height:25px; width:25px;margin-left:5px;"
+								ajax="rowSelect" title="Editar" />
+						</p:dataList>
+
+						<p:commandButton					  	
+							action='#{usuarioControllerMaster.novaAvaliacaoParaUsuario("chama-aluno")}'
+							value="Nova" ajax="rowSelect"
+							title="Realizar nova avaliação para #{usuarioControllerMaster.usuario.nome}" />
+
+						<p:commandButton
+							action="#{usuarioControllerMaster.prepararComparacao()}"
+							value="Comparar" ajax="rowSelect"
+							title="Comparar as avaliações de #{usuarioControllerMaster.usuario.nome}" />
+
+					</p:panel>
+
+				</h:form>
+
+				<p:accordionPanel multiple="true">
+					<p:tab title="Presenças">
+						<div style="overflow: hidden;">
+							<p:calendar mode="inline" navigator="none"
+								style="font-size: 17px;" styleClass=".ui-datepicker-week-end"
+								locale="pt" />
+
+						</div>
+
+					</p:tab>
+
+					<p:tab title="Estatísticas">
+						<h:outputText value="Menu 2 Content" />
+					</p:tab>
+
+					<p:tab title="Professores">
+						<h:outputText value="Menu 3 Content" />
+					</p:tab>
+				</p:accordionPanel>
+			</p:layoutUnit>
+
+			<p:layoutUnit id="center" position="center">
+
+
+
+				<h:panelGrid columns="1" layout="grid"
+					style="float: left; width: 600px	">
+
+<!-- 					<h:panelGroup> -->
+<!-- 						<p:graphicImage library="images" name="godfather1.jpg" -->
+<!-- 							style="border-radius: 5px;" /> -->
+<!-- 					</h:panelGroup> -->
+
+					<h:panelGroup>
+						<h:panelGrid columns="2">
+							<h:outputText value="Código:" />
+							<h:outputText value="#{usuarioControllerMaster.usuario.id}" />
+
+							<h:outputText value="Nome:" />
+							<h:outputText value="#{usuarioControllerMaster.usuario.nome}" />
+
+							<h:outputText value="Sexo:" />
+							<h:outputText value="#{usuarioControllerMaster.usuario.sexo}" />
+
+							<h:outputText value="Data de Nascimento:" />
+							<h:outputText
+								value="#{usuarioControllerMaster.usuario.dataDeNascimento}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</h:outputText>
+
+							<h:outputText value="Login:" />
+							<h:outputText value="#{usuarioControllerMaster.usuario.login}" />
+
+							<h:outputText value="e-mail:" />
+							<h:outputText value="#{usuarioControllerMaster.usuario.email}" />
+						</h:panelGrid>
+					</h:panelGroup>
+
+					<p:commandButton action="chama-edicao-aluno.xhtml" value="Editar"
+						actionListener="#{usuarioControllerMaster.editarAluno()}" />
+
+				</h:panelGrid>
+
+
+
+			</p:layoutUnit>
+
+		</p:layout>
+
+	</h:body>
+
+</f:view>
+</html>
